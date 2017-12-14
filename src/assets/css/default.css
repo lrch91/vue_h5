@@ -509,10 +509,10 @@ canvas.wave{
 }
 
 #device_content{
-	position: fixed;
-	top: 0.88rem;
+	/* position: fixed; */
+	position: absolute;
 	width: 100%;
-	height: calc(100% - 0.88rem);
+	height: 100%;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch
 }
@@ -808,78 +808,6 @@ div.pop_panel_bg .panel_submit{
 	border: transparent;
 	color: white;
 	font-size: 1rem;
-}
-
-/*部门总经理落实*/
-.general_manager_do{
-	width: 100%;
-	height: 100%;
-}
-.general_manager_do span{
-	font-size: .3rem;
-	color: #333;
-}
-.general_manager_do li{
-	width: 100%;
-	height: .94rem;
-	line-height: .94rem;
-	background-color: #fafafa;
-	border-bottom: 1px solid #cdcdcd;
-	padding: 0rem .28rem;
-}
-.icon_plus{
-	display: inline-block;
-	float: left;
-	width: .38rem;
-	height: .38rem;
-	box-sizing: border-box;
-	margin-right: .2rem;
-	margin-top: .3rem;
-	background:url("../img/icon_plus_24.png") center;
-}
-.dep_name{
-	float: left;
-	height: .4rem;
-	display: inline-block;
-	font-size: .42rem;
-}
-.general_manager_do .dep_manager{
-	padding-left: 1.6rem;
-	color: #555;
-	font-size: .4rem;
-}
-.sel_icon{
-	display: inline-block;
-	float: right;
-	margin-top: .3rem;
-	width: .38rem;
-	height: .38rem;
-	background: url("../img/icon_blank_24.png")center;
-}
-.general_btn {
-	position: absolute;
-	top: 0.07rem;
-	left: 0;
-	width: 100%;
-	height: .84rem;
-}
-button{
-	outline: none;
-}
-.general_btn button{
-	width: 1.98rem;
-	height: .84rem;
-	float: left;
-	line-height: .84rem;
-	margin-left: .42rem;
-	border: 2px solid #11a9ec;
-	background-color: #fafafa;
-	font-size: .3rem;
-	color: #11a9ec;
-}
-.confirm{
-	background-color: #11a9ec;
-	color: #fafafa;
 }
 
 /*填写处理意见*/

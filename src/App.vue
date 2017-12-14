@@ -19,11 +19,12 @@ export default {
   
 <style>
 #app {
-  position: fixed;
+  /* position: fixed; */
+  position: absolute;
 	top: 0.88rem;
 	width: 100%;
 	height: calc(100% - 0.88rem);
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch
+	/* overflow-y: auto;
+	-webkit-overflow-scrolling: touch */
 }
 </style>

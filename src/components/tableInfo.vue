@@ -1,10 +1,10 @@
 <template>
   <table border="1" cellspacing="0" class="info_table">
-    <tbody v-for="item in tableInfo">
-      <tr v-if="item.tableTitle&&item.tableTitle.length>0">
-        <th v-for="tt in item.tableTitle[0]">{{tt.titleName}}</th>
+    <tbody v-for="table in tableInfo" v-if="table.tablePara.keyColmName==tableName">
+      <tr v-if="table.tableTitle&&table.tableTitle.length>0">
+        <th v-for="tt in table.tableTitle">{{tt.titleName}}</th>
       </tr>
-      <tr v-for="tb in item.tableBody">
+      <tr v-for="tb in table.tableBody">
         <td v-for="rb in tb.rowBody">{{rb}}</td>
       </tr>
     </tbody>
@@ -15,21 +15,32 @@
 import {mapGetters} from 'vuex'
 
 export default {
-  name: '',
   data () {
     return {
-      tableInfo:[]
+      tableInfo:[],
+      tableName:'',
     }
   },
   methods:{
 
   },
   computed:{
-    ...mapGetters(['getMain_tableInfo']),
+    ...mapGetters(['getMain_tableInfo','getMain_tableName']),
   },
-  created(){
-		this.tableInfo = this.getMain_tableInfo;
-	},
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.tableName = vm.getMain_tableName;
+      vm.tableInfo = vm.getMain_tableInfo;
+      // console.log("getMain_tableName");
+      // console.log(JSON.stringify(vm.getMain_tableName));
+      // console.log("getMain_tableInfo");
+      // console.log(JSON.stringify(vm.getMain_tableInfo));
+    })
+  },
+  beforeRouteLeave (to, from, next) {
+	  this.tableName = '';
+		next();
+  },
 }
 </script>
 

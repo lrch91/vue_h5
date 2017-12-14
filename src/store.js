@@ -4,19 +4,22 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state: {
-        mainInfo:{
+        main:{
+			mainInfo:{}
         },
 		bottomTab:{
             bottomType: 0
 		},
-		main:{
-			tableInfo: []
+		tableInfo:{
+			tableInfo: [],
+			tableName:'',
 		}
 	},
 	getters: {
 		getBottomTabType: state => state.bottomTab.bottomType,
-		getMainInfo: state => state.mainInfo,
-		getMain_tableInfo: state => state.main.tableInfo,
+		getMainInfo: state => state.main.mainInfo,
+		getMain_tableInfo: state => state.tableInfo.tableInfo,
+		getMain_tableName: state => state.tableInfo.tableName,
 		/* headNav: state => state.headNav,
 		audio: state => state.audio,
 		head: state => state.head,
@@ -27,13 +30,16 @@ const store = new Vuex.Store({
 	},
 	mutations: {
         setMainInfo(state, mainInfo){
-            state.mainInfo = mainInfo;
+            state.main.mainInfo = mainInfo;
         },
         setBottomTabType(state, bottomType){
             state.bottomTab.bottomType = bottomType;
         },
         setMain_tableInfo(state, tableInfo){
-            state.main.tableInfo = tableInfo;
+            state.tableInfo.tableInfo = tableInfo;
+        },
+        setMain_tableName(state, tableName){
+            state.tableInfo.tableName = tableName;
         }
 		/* setAudio(state, audio){
 			if (!state.listenCount) {

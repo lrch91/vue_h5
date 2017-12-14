@@ -7,13 +7,10 @@
       <div class="choice_two" @click="tab_choose(2)">
           <a :class="{'c_18B4FE':(tab_choice==2),'c_bdc5d1':(tab_choice!=2)}"><strong>审批意见</strong></a>
       </div>
-      <div class="choice_three" @click="tab_choose(3)">
-          <a :class="{'c_18B4FE':(tab_choice==3),'c_bdc5d1':(tab_choice!=3)}"><strong>正文</strong></a>
-      </div>
 
       <div class="tab_one" v-show="tab_choice==1">
         <ul id="form-items">
-          <li v-for="item in form.documentDataInfo" v-if="item.colmValue!='MtvTab'&&item.colmValue!='TAB_FEE_DETAILS'">
+          <li v-for="item in form.documentDataInfo" v-if="item.colmType!='ATTACH'&&item.colmType!='TABLE'">
             <label>
               <span>{{item.colmName}}</span><i/>
             </label>
@@ -22,7 +19,7 @@
             </label>
           </li>
 
-          <li v-for="item in form.documentDataInfo" v-if="item.colmValue=='MtvTab'" :style="{height: attachs_label_open+'rem'}" >
+          <li v-for="item in form.documentDataInfo" v-if="item.colmType=='ATTACH'" :style="{height: attachs_label_open+'rem'}" >
             <label :style="{height: attachs_label_open+'rem'}">
               <span style="white-space:normal">{{item.colmName}}</span><i/>
             </label>
@@ -39,12 +36,12 @@
             </label>
           </li>
 
-          <li v-for="item in form.documentDataInfo" v-if="item.colmValue=='TAB_FEE_DETAILS'">
+          <li v-for="item in form.documentDataInfo" v-if="item.colmType=='TABLE'">
             <label style="height: 1.28rem">
               <span style="white-space:normal">{{item.colmName}}</span><i/>
             </label>
             <label style="height: 1.28rem">
-              <img class="to_table" @click="to_table" src="../assets/img/check_attach_bt.png">
+              <img class="to_table" @click="to_table(item.colmValue)" src="../assets/img/check_attach_bt.png">
             </label>
           </li>
 
@@ -73,11 +70,6 @@
         </ul>
 	    </div>
 
-	    <div class="tab_three" v-show="tab_choice==3">
-		    <div id="form_articles">
-          <div class="fill98"></div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -94,6 +86,8 @@ export default {
 			attachs_label_open: 1.28,
       opinions: {commentInfo:[]},
       tab_choice:1,
+			postCount:0,
+			popupVisible:false,
       /* a:{ 
           procType:"01",
           procId:"61286215",
@@ -103,25 +97,46 @@ export default {
           commentType:"00",
           types:"资金划拨",
           j_username:"zhujinliang",
-          j_password:"8888"
+          j_password:"8888",
         } */
-      a:{ 
-          procType:"01",
-          procId:"61290471",
-          userId:"zhujinliang",
-          system:"efinancema",
-          processId:"5023086",
-          commentType:"00",
-          types:"资金划拨",
-          j_username:"zhujinliang",
-          j_password:"8888"
-        }
+      a:{
+				//EFINANCEMA
+				procType:"01",
+				procId:"61290471",
+				userId:"zhujinliang",
+				system:"efinancema",
+				processId:"5023086",
+				commentType:"00",
+				types:"资金划拨",
+				j_username:"zhujinliang",
+				j_password:"8888",
+			}, 
+			// a:{
+			// 	//purchase-web
+			// 	procType:"01",
+			// 	procId:"61180825",
+			// 	userId:"zhujinliang",
+			// 	system:"gxmccprocess2",
+			// 	processId:"fed2f60e-defe-473a-8831-4586e74f43d9",
+			// 	commentType:"00",
+			// 	types:"市公司采购方案审批流程",
+			// 	j_username:"zhujinliang",
+			// 	j_password:"8888", 
+			// }
     }
   },
+	watch:{
+		postCount(curVal,oldVal){
+　　	if(curVal==3){
+				this.$indicator(0);
+			}
+		}
+	},
 	created(){
+		this.$indicator(1);
 		this.$store.commit('setMainInfo',this.a)
 		console.log("getMainInfo")
-		console.log(JSON.stringify(this.getMainInfo))
+		// console.log(JSON.stringify(this.getMainInfo))
 	},
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -149,14 +164,20 @@ export default {
         console.log(data);
       }) */
 			// this.$login2({j_username:this.a.j_username,j_password:this.a.j_password})
-			this.$login3({j_username:this.a.j_username,j_password:this.a.j_password});
+			this.$login({j_username:this.a.j_username,j_password:this.a.j_password},function(){
+				//success
+			},function(){
+				//error
+			});
 			console.log(this.$route.path);
     },
     postForm(){
 			var t = {procType:this.a.procType,procId:this.a.procId,userId:this.a.userId,system:this.a.system};
-		  this.$post(this.$url.EFinancema_form,t).then((data) => {
+		  this.$post(this.$url.form,t).then((data) => {
+				this.postCount++;
 				if(data.documentDataInfo){
-					this.form.documentDataInfo = data.documentDataInfo.splice(3)
+					this.form.documentDataInfo = data.documentDataInfo
+					// this.form.documentDataInfo = data.documentDataInfo.splice(3)
 				}
 				if(data.attachDataInfo){
 					this.form.attachDataInfo = data.attachDataInfo
@@ -168,7 +189,8 @@ export default {
     },
     postOpinions(){
 			var t = {procId:this.a.processId, userId:this.a.userId, system:this.a.system, commentType:this.a.commentType};
-      this.$post(this.$url.EFinancema_opinions,t).then((data) => {
+      this.$post(this.$url.opinions,t).then((data) => {
+				this.postCount++;
 				if(data.commentInfo){
 					this.opinions.commentInfo = data.commentInfo
 				}
@@ -176,7 +198,9 @@ export default {
     },
 		postTable(){
 			var t = {procId:this.a.procId, userId:this.a.userId, procType:this.a.procType, system:this.a.system, pageNum:"1", pageSize: "100", keyColmName:"all"};
-      this.$post(this.$url.EFinancema_table,t).then((data) => {
+      this.$post(this.$url.table,t).then((data) => {
+				this.postCount++;
+				console.log(JSON.stringify(data.tableInfo))
 				this.setMain_tableInfo(data.tableInfo);
 			})
     },
@@ -199,15 +223,9 @@ export default {
 		},
 		to_attachlist:function(){
 			this.$router.push('/attachlist')
-			// var json={};
-			// var po = this.po;
-			// json.attachDataInfo = po.formModel.attachDataInfo;
-			// json.system = po.get("system");
-			// json.j_username = po.get("j_username");
-			// json.j_password = po.get("j_password");
-			// appRouter.navigate("EFinancema_checkAttach/"+JSON.stringify(json), {trigger: true});
 		},
-		to_table(){
+		to_table(colmName){
+			this.$store.commit('setMain_tableName',colmName)
 			this.$router.push('/tableInfo')
 		},
   },
@@ -228,7 +246,7 @@ export default {
 .choice_one{
 	background-color: #FFFFFF;
 	left:0;
-	width: calc(33.33% - 1px);
+	width: calc(50% - 1px);
 	float:left;
 	height: 0.88rem;
 	border-right: 0.03% solid #EFF0F4;
@@ -244,7 +262,7 @@ export default {
 .choice_two{
 	background-color: #FFFFFF;
 	margin-left:1px;
-	width: calc(33.33% - 1px);
+	width: calc(50% - 1px);
 	float:left;
 	height: 0.88rem;
 }
@@ -301,7 +319,7 @@ export default {
 .tab_one ul li label:last-child{
 	float: right;
 	height: 0.88rem;
-	width: 5.7rem;
+	width: calc(100% - 1.8rem);
 }
 
 .tab_one li label:first-child span{
@@ -349,13 +367,11 @@ export default {
 }
 
 .attachs_open_btn{
-	width:0.82rem;
-	height:1.28rem;
 	float:right;
 	display:block;
 	width:0.26rem;
 	height:0.26rem;
-	padding:0.51rem 0.28rem
+	padding:0.51rem 0.2rem 0.3rem 0.28rem
 }
 
 .attach-li{

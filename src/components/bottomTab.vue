@@ -6,6 +6,12 @@
 		<button v-if="getBottomTabType==1" @click="to_submit()" class="tofill_button">
 			填写处理意见
 		</button>
+
+		<div class="general_btn" v-if="getBottomTabType==2">
+			<button class="select_all">全选</button>
+			<button class="cancel_sel">取消选中</button>
+			<button class="confirm">确定</button>
+		</div>
 	</div>
 </template>
 
@@ -19,7 +25,7 @@ export default{
 	},
 	methods:{
 		to_submit(){
-			this.$router.push("/tableInfo")
+			this.$router.push("/choosePersonUnderOrg")
 		}
 	},
 	computed:{
@@ -32,6 +38,7 @@ export default{
 .bottom_tab{
 	z-index: 99999;
 	position: fixed;
+	/* position: absolute; */
 	width: 100%;
 	height: 0.98rem;
 	background-color: rgba(155, 156, 158, 0.6);
@@ -66,5 +73,33 @@ export default{
 	border: transparent;
 	color: white;
 	font-size: 0.3rem;
+}
+
+.general_btn {
+	position: absolute;
+	top: 0.07rem;
+	left: 0;
+	width: 100%;
+	height: .84rem;
+}
+button{
+	outline: none;
+}
+.general_btn button{
+	width: 1.98rem;
+	height: .84rem;
+	float: left;
+	line-height: .84rem;
+	margin-left: .42rem;
+	border: 2px solid #11a9ec;
+	background-color: #fafafa;
+	font-size: .3rem;
+	color: #11a9ec;
+	border-radius: 0.1rem;
+}
+.confirm{
+	background-color: #11a9ec;
+	color: #fafafa;
+	border-radius: 0.1rem;
 }
 </style>

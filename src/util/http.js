@@ -3,13 +3,20 @@ import axios from 'axios'
 // axios.defaults.timeout = 600000;                        //响应时间
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';           //配置请求头
 axios.defaults.baseURL = 'http://192.168.191.1:8080/';   //配置接口地址
+// axios.defaults.baseURL = 'http://127.0.0.1:8080/';   //配置接口地址
 // axios.defaults.withCredentials=true
 //POST传参序列化(添加请求拦截器)
 axios.interceptors.request.use((config) => {
-    var data = config.data;
-    for(var key in data){
-        data[key] = encodeURI(data[key]);
-   } 
+    if(config.url.search('EIP_MOA_Services')!=-1){
+        var data = config.data;
+        for(var key in data){
+            data[key] = encodeURI(data[key]);
+        } 
+        config.data = data;
+        return config;
+    }else{
+        return config;
+    }
 	//在发送请求之前做某件事
     // if(config.method  === 'post'){
     //     config.data = JSON.stringify(config.data);
@@ -18,23 +25,22 @@ axios.interceptors.request.use((config) => {
             // 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'
         // }
     // }
-    config.data = data;
-    return config;
 },(error) =>{
     return Promise.reject(error);
 });
 //返回状态判断(添加响应拦截器)
 axios.interceptors.response.use((res) =>{
-    /* if(!res.data || res.data==''){
-        return Promise.reject(res);
-    } */
-　  try {
-        res.data = JSON.parse(decodeURIComponent(res.data));
-　　} catch(error) {
-        res.data={errFlag:"N"}
-　　} finally {
-　　}
-    return res;
+    if(res.config.url.search('EIP_MOA_Services')!=-1){
+        try {
+            res.data = JSON.parse(decodeURIComponent(res.data));
+    　　} catch(error) {
+            res.data={errFlag:"N"}
+    　　} finally {
+    　　}
+        return res;
+    }else{
+        return res;
+    }
 }, (error) => {
     return Promise.reject(error);
 });
@@ -43,7 +49,9 @@ export function post(url, params = {}) {
     return new Promise((resolve, reject) => {
         axios.post(url, params)
             .then(response => {
+                console.log("==========="+url+"================")
                 console.log(JSON.stringify(response.data))
+                console.log("===========================================================================")
                 resolve(response.data);
             }, err => {
                 reject(err);
@@ -54,7 +62,9 @@ export function post(url, params = {}) {
     })
 }
 
-export function login(data) {
+//============================================================================================
+
+/* export function login3(data) {
     return new Promise((resolve, reject) => {
         axios({
                 method: 'post',
@@ -72,9 +82,9 @@ export function login(data) {
                reject(error)
             })
     })
-}
+} */
 
-export function login2(data) {
+/* export function login2(data) {
     var obj = new XMLHttpRequest();
     obj.open("POST", '/EIP_SSO/j_security_check', true);
     obj.setRequestHeader("Content-type", "application/x-www-form-urlencoded");  // 添加http头，发送信息至服务器时内容编码类型
@@ -86,7 +96,7 @@ export function login2(data) {
         // }
     };
     obj.send(JSON.stringify(data));
-}
+} */
 
 function ajax(options) {
     function empty() {}
@@ -179,41 +189,43 @@ function ajax(options) {
     xhr.send(opt.data ? obj2Url(opt.data) : null);
 }
 
-export function login3(data){
+export function login(data, s, e){
     ajax({
-        url: '/EIP_SSO/j_security_check',
+        url: url.login,
         method: 'POST',
-        data:data,
+        data: data,
         success:function(data,xhr){
             console.log("success");
-            // console.log(data,xhr);
+            s();
         },
         error:function(err,xhr){
             console.log("error");
-            // console.log(err,xhr);
+            e();
         }
     });
 }
 
+//============================================================================================
+
 export let url= {
-   //登录 j_username  j_password
-   'EFinancema_login': '/EIP_SSO/j_security_check',
-   //表单 procType procId userId system
-   'EFinancema_form': '/EIP_MOA_Services/QueryProcDataForSimpleSrv.do?method=getQueryProcDataForSimple',
-   //表格 procType procId userId system pageNum pageSize keyColmName
-   'EFinancema_table': '/EIP_MOA_Services/QueryProcDataForSimpleTableSrv.do?method=getQueryProcDataForSimpleTable',
-   //审批意见接口 userId system procId commentType  commentType  全部=00 领导=01
-   'EFinancema_opinions': '/EIP_MOA_Services/QueryCommentSrv.do?method=getQueryComment',
-   //路径1.查询路径 参数 procId userId system queryItem 其中queryItem为实体类 里面是 colmEnName（固定为NextStep） colmValue(空) reserve1(空)
-   //   2.查询人   参数 procId userId system queryItem 其中queryItem为实体类 里面是 colmEnName（固定为NextStep） colmValue(里面为stepId，在查询路径json提供) reserve1(stepName,在查询路径json提供)
-   'EFinancema_queryTpl': '/EIP_MOA_Services/QueryTemplateRelaInfoSrv.do?method=getQueryTemplateRelaInfo',
-   //暂不能用 提交 procId userId comment nextUser nextStep nextStepName
-   'EFinancema_submit': '/EIP_MOA_Services/SubmitProcDataSrv.do?method=getSubmitProcData',
-   //附件下载 fileId system
-   // 'EFinancema_attachDownload': '/EIP_MOA_Services/DownloadAttachmentsSrv.do?method=getDownloadAttachments',
-   'EFinancema_attachDownload': '/EIP_MOA_Services/DownloadAttachSrv.do?method=getDownloadAttach',
-   //常用审批意见查询接口 userId flowName
-   'EFinancema_usualOpinionOptions': '/EIP_MOA_Services/QueryPresetAuditingCommentsSrv.do?method=getQueryPresetAuditingComments',
-   // 暂未用 流程轨迹查询接口 userId procId 注意这里的procId是process_unify_XXX表的processId字段
-   'EFinancema_queryTrailFlow': '/EIP_MOA_Services/QueryProcTracingSrv.do?method=getQueryProcTracing',
+    //登录 j_username  j_password
+    login: '/EIP_SSO/j_security_check',
+    //表单 procType procId userId system
+    form: '/EIP_MOA_Services/QueryProcDataForSimpleSrv.do?method=getQueryProcDataForSimple',
+    //表格 procType procId userId system pageNum pageSize keyColmName
+    table: '/EIP_MOA_Services/QueryProcDataForSimpleTableSrv.do?method=getQueryProcDataForSimpleTable',
+    //审批意见接口 userId system procId commentType  commentType  全部=00 领导=01
+    opinions: '/EIP_MOA_Services/QueryCommentSrv.do?method=getQueryComment',
+    //路径1.查询路径 参数 procId userId system queryItem 其中queryItem为实体类 里面是 colmEnName（固定为NextStep） colmValue(空) reserve1(空)
+    //   2.查询人   参数 procId userId system queryItem 其中queryItem为实体类 里面是 colmEnName（固定为NextStep） colmValue(里面为stepId，在查询路径json提供) reserve1(stepName,在查询路径json提供)
+    queryTpl: '/EIP_MOA_Services/QueryTemplateRelaInfoSrv.do?method=getQueryTemplateRelaInfo',
+    //暂不能用 提交 procId userId comment nextUser nextStep nextStepName
+    submit: '/EIP_MOA_Services/SubmitProcDataSrv.do?method=getSubmitProcData',
+    //附件下载 fileId system
+    // 'attachDownload': '/EIP_MOA_Services/DownloadAttachmentsSrv.do?method=getDownloadAttachments',
+    attachDownload: '/EIP_MOA_Services/DownloadAttachSrv.do?method=getDownloadAttach',
+    //常用审批意见查询接口 userId flowName
+    usualOpinionOptions: '/EIP_MOA_Services/QueryPresetAuditingCommentsSrv.do?method=getQueryPresetAuditingComments',
+    // 暂未用 流程轨迹查询接口 userId procId 注意这里的procId是process_unify_XXX表的processId字段
+    queryTrailFlow: '/EIP_MOA_Services/QueryProcTracingSrv.do?method=getQueryProcTracing',
 }
