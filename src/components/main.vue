@@ -10,7 +10,7 @@
 
       <div class="tab_one" v-show="tab_choice==1">
         <ul id="form-items">
-          <li v-for="item in form.documentDataInfo" v-if="item.colmType!='ATTACH'&&item.colmType!='TABLE'">
+          <li v-for="item in form.documentDataInfo" :key="item.colmSort" v-if="item.colmType!='ATTACH'&&item.colmType!='TABLE'">
             <label>
               <span>{{item.colmName}}</span><i/>
             </label>
@@ -25,7 +25,7 @@
             </label>
             <label :style="{height: attachs_label_open+'rem'}">
               <div class="attach-ul" style="width:4.88rem; height: 1.28rem; float:left">
-                <div v-for="(ad,index) in form.attachDataInfo" v-show="index==0||attachs_open_flag==1" class="attach-li">
+                <div v-for="(ad,index) in form.attachDataInfo" :key="ad.fileSort" v-show="index==0||attachs_open_flag==1" class="attach-li">
                     <span style="width:4.68rem;vertical-align: middle;word-wrap: break-word;display: inline-block;line-height: 0.32rem;font-size: 0.3rem;white-space:normal;margin-left: 0.2rem;">
                         {{ad.fileName}}
                     </span><i/>
@@ -87,42 +87,28 @@ export default {
       opinions: {commentInfo:[]},
       tab_choice:1,
 			postCount:0,
-			popupVisible:false,
-      /* a:{ 
-          procType:"01",
-          procId:"61286215",
-          userId:"zhujinliang",
-          system:"efinancema",
-          processId:"5022547",
-          commentType:"00",
-          types:"资金划拨",
-          j_username:"zhujinliang",
-          j_password:"8888",
-        } */
-      a:{
-				//EFINANCEMA
-				procType:"01",
-				procId:"61290471",
-				userId:"zhujinliang",
-				system:"efinancema",
-				processId:"5023086",
-				commentType:"00",
-				types:"资金划拨",
-				j_username:"zhujinliang",
-				j_password:"8888",
-			}, 
 			// a:{
-			// 	//purchase-web
 			// 	procType:"01",
-			// 	procId:"61180825",
-			// 	userId:"zhujinliang",
+			// 	procId:"61236631",
+			// 	userId:"fanxiongfu",
 			// 	system:"gxmccprocess2",
-			// 	processId:"fed2f60e-defe-473a-8831-4586e74f43d9",
+			// 	processId:"e083ce28-c571-4d89-b3ab-2d33ae62a98b",
 			// 	commentType:"00",
-			// 	types:"市公司采购方案审批流程",
-			// 	j_username:"zhujinliang",
+			// 	types:"区公司采购方案审批流程",
+			// 	j_username:"fanxiongfu",
 			// 	j_password:"8888", 
 			// }
+			a:{
+				procType:"01",
+				procId:"61296030",
+				userId:"wangbo",
+				system:"efinancema",
+				processId:"5023408",
+				commentType:"00",
+				types:"资金划拨",
+				j_username:"wangbo",
+				j_password:"8888", 
+			}
     }
   },
 	watch:{
@@ -132,23 +118,40 @@ export default {
 			}
 		}
 	},
-	created(){
-		this.$indicator(1);
-		this.$store.commit('setMainInfo',this.a)
-		console.log("getMainInfo")
-		// console.log(JSON.stringify(this.getMainInfo))
-	},
+	created () {
+		console.log("==============created")
+  },
+  beforeMount () {
+		console.log("==============beforeMount")
+  },
+  mounted () {
+		console.log("==============mounted")
+  },
   beforeRouteEnter (to, from, next) {
     next(vm => {
+			if(from.path=="/"){
+				vm.form={attachDataInfo: [],documentDataInfo: []}
+				vm.attachs_open_flag=0
+				vm.attachs_label_open=1.28
+				vm.opinions={commentInfo:[]}
+				vm.tab_choice=1
+				vm.postCount=0
+
+				vm.$indicator(1);
+				vm.$store.commit('setMainInfo',vm.a)
+				
+				if(!vm.$checkLogin()){
+					vm.login()
+				}
+				vm.postForm()
+				vm.postOpinions()
+				vm.postTable()
+			}
 			vm.$store.commit('setBottomTabType',1)
 			// vm.setBottomTabType(1); 等价于上一行
 			console.log("beforeRouteEnter-getBottomTabType");
 			console.log(vm.getBottomTabType);
 			// console.log(vm.$store.getters.getBottomTabType); 等价于上一行
-      vm.login()
-      vm.postForm()
-      vm.postOpinions()
-			vm.postTable()
     })
   },
   beforeRouteLeave (to, from, next) {
@@ -185,6 +188,9 @@ export default {
 				if(data.bodyDataInfo){
 					this.form.bodyDataInfo = data.bodyDataInfo
 				}
+			},(err)=>{
+				this.$toast(JSON.stringify(err))
+				this.postCount++;
 			})
     },
     postOpinions(){
@@ -194,6 +200,9 @@ export default {
 				if(data.commentInfo){
 					this.opinions.commentInfo = data.commentInfo
 				}
+			},(err)=>{
+				this.$toast(JSON.stringify(err))
+				this.postCount++;
 			})
     },
 		postTable(){
@@ -202,6 +211,9 @@ export default {
 				this.postCount++;
 				console.log(JSON.stringify(data.tableInfo))
 				this.setMain_tableInfo(data.tableInfo);
+			},(err)=>{
+				this.$toast(JSON.stringify(err))
+				this.postCount++;
 			})
     },
     tab_choose: function (va) {

@@ -5,9 +5,9 @@ import router from './router'
 import store from './store'
 import mint from 'mint-ui'
 import 'mint-ui/lib/style.css'
-import plugin from './plugin/indicator/index'
+import plugin from './plugin/index'
 import FastClick from 'fastclick'
-import {post,login,url} from './util/http'
+import {post,checkLogin,login,url} from './util/http'
 import './assets/css/default.css'
 
 // Vue.use(mint)
@@ -33,6 +33,7 @@ FastClick.attach(document.body)
 Vue.config.productionTip = false
 Vue.prototype.$post = post
 Vue.prototype.$login = login
+Vue.prototype.$checkLogin = checkLogin
 Vue.prototype.$url = url
 
 /* eslint-disable no-new */

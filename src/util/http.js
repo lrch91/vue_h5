@@ -9,9 +9,35 @@ axios.defaults.baseURL = 'http://192.168.191.1:8080/';   //配置接口地址
 axios.interceptors.request.use((config) => {
     if(config.url.search('EIP_MOA_Services')!=-1){
         var data = config.data;
-        for(var key in data){
-            data[key] = encodeURI(data[key]);
-        } 
+        try{
+            for(var key in data){
+                if((data[key]).constructor==Array){
+                    console.log("data[key]");
+                    console.log((data[key]).constructor);
+                    for(var i=0;i<data[key].length;i++){
+                        var obj = (data[key])[i];
+                        for(var ky in obj){
+                            obj[ky] = encodeURI(obj[ky])
+                        }
+                        // {"procId":"61294390","userId":"lushengde","system":"efinancema","queryItem":[{"colmEnName":"NextStep","colmValue":"","reserve1":""}]}
+                        //http://10.185.15.59:9080/EFinancema/unifyAction.do?method=apply1&userId=lushengde&procId=61294390&processPath=true
+                        
+                        (data[key])[i] = obj;
+                        // {"procId":"61294390","userId":"lushengde","system":"efinancema","queryItem":[{"colmEnName":"NextStep","colmValue":"","reserve1":""}]}
+                        //http://10.185.15.59:9080/EFinancema/unifyAction.do?method=apply1&userId=lushengde&procId=61294390&processPath=true
+                    }
+                    console.log(JSON.stringify(data[key]))
+                }else{
+                    data[key] = encodeURI(data[key]);
+                }
+            } 
+        }catch(error){
+            console.log("request.error")
+            console.log(error)
+        }finally{
+
+        }
+        
         config.data = data;
         return config;
     }else{
@@ -32,9 +58,12 @@ axios.interceptors.request.use((config) => {
 axios.interceptors.response.use((res) =>{
     if(res.config.url.search('EIP_MOA_Services')!=-1){
         try {
+            var temp = res.data
             res.data = JSON.parse(decodeURIComponent(res.data));
-    　　} catch(error) {
-            res.data={errFlag:"N"}
+        } catch(error) {
+            // console.log("response.error");
+            // console.log(error);
+            // res.data={errFlag:"Y"}
     　　} finally {
     　　}
         return res;
@@ -42,7 +71,10 @@ axios.interceptors.response.use((res) =>{
         return res;
     }
 }, (error) => {
-    return Promise.reject(error);
+    var err={};
+    err.status = error.response.status
+    err.statusText = error.response.statusText
+    return Promise.reject(err);
 });
 
 export function post(url, params = {}) {
@@ -52,7 +84,13 @@ export function post(url, params = {}) {
                 console.log("==========="+url+"================")
                 console.log(JSON.stringify(response.data))
                 console.log("===========================================================================")
-                resolve(response.data);
+                if(!response.data.errFlag){
+                    reject("errFlag为空");
+                }else if(response.data.errFlag=="Y"){
+                    reject(response.data.errMsg||"返回数据失败");
+                }else if(response.data.errFlag=="N"){
+                    resolve(response.data);
+                }
             }, err => {
                 reject(err);
             })
@@ -206,6 +244,27 @@ export function login(data, s, e){
 }
 
 //============================================================================================
+export function checkLogin(){
+    var tag=0;
+    var cArray = document.cookie.split(";")
+    if(!cArray || cArray.length<2){
+        console.log("checklogin-------------------false")
+        return false;
+    }
+    for(var k in cArray){
+       if((cArray[k].split(":")[0].search("LtpaToken")!=-1)||(cArray[k].split(":")[0].search("LtpaToken2")!=-1)){
+           tag++;
+       }
+    }
+    if(tag==2){
+        console.log("checklogin-------------------true")
+        return true
+    }else{
+        console.log("checklogin-------------------false")
+        return false
+    }
+}
+//============================================================================================
 
 export let url= {
     //登录 j_username  j_password
@@ -229,3 +288,5 @@ export let url= {
     // 暂未用 流程轨迹查询接口 userId procId 注意这里的procId是process_unify_XXX表的processId字段
     queryTrailFlow: '/EIP_MOA_Services/QueryProcTracingSrv.do?method=getQueryProcTracing',
 }
+
+

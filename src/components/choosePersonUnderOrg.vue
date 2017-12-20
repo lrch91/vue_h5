@@ -102,10 +102,15 @@ export default {
 
 <style scoped>
 .dep_ul{
+	z-index:12;
+	left:0;
+	top:0;
+	position:absolute;
 	width: 100%;
 	height: 100%;
     font:normal .34rem "Microsoft YaHei";
 	color: #333;
+	background-color:white;
 }
 .dep_li{
     width:100%;

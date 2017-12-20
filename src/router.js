@@ -4,11 +4,12 @@ import Main from '@/components/main'
 import Attachlist from '@/components/attachlist'
 import TableInfo from '@/components/tableInfo'
 import ChoosePersonUnderOrg from '@/components/choosePersonUnderOrg'
+import WriteOpinion from '@/components/writeOpinion'
 
 Vue.use(Router)
 
 export default new Router({
-  // mode: 'history',
+  mode: 'history',
   routes:
   [{
     path: '/main',
@@ -27,5 +28,9 @@ export default new Router({
     path: '/choosePersonUnderOrg',
     name: 'ChoosePersonUnderOrg',
     component: ChoosePersonUnderOrg,
+  },{
+    path: '/writeOpinion',
+    name: 'WriteOpinion',
+    component: WriteOpinion,
   }]
 })

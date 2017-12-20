@@ -25,7 +25,7 @@ export default{
 	},
 	methods:{
 		to_submit(){
-			this.$router.push("/choosePersonUnderOrg")
+			this.$router.push("/writeOpinion")
 		}
 	},
 	computed:{
