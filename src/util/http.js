@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // axios.defaults.timeout = 600000;                        //响应时间
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';           //配置请求头
-axios.defaults.baseURL = 'http://192.168.191.1:8080/';   //配置接口地址
+// axios.defaults.baseURL = 'http://192.168.191.1:8080/';   //配置接口地址 打包时注释掉
 // axios.defaults.baseURL = 'http://127.0.0.1:8080/';   //配置接口地址
 // axios.defaults.withCredentials=true
 //POST传参序列化(添加请求拦截器)
@@ -12,8 +12,6 @@ axios.interceptors.request.use((config) => {
         try{
             for(var key in data){
                 if((data[key]).constructor==Array){
-                    console.log("data[key]");
-                    console.log((data[key]).constructor);
                     for(var i=0;i<data[key].length;i++){
                         var obj = (data[key])[i];
                         for(var ky in obj){
@@ -26,7 +24,6 @@ axios.interceptors.request.use((config) => {
                         // {"procId":"61294390","userId":"lushengde","system":"efinancema","queryItem":[{"colmEnName":"NextStep","colmValue":"","reserve1":""}]}
                         //http://10.185.15.59:9080/EFinancema/unifyAction.do?method=apply1&userId=lushengde&procId=61294390&processPath=true
                     }
-                    console.log(JSON.stringify(data[key]))
                 }else{
                     data[key] = encodeURI(data[key]);
                 }
@@ -37,7 +34,8 @@ axios.interceptors.request.use((config) => {
         }finally{
 
         }
-        
+        console.log("request-processed-data");
+        console.log(JSON.stringify(data));
         config.data = data;
         return config;
     }else{
@@ -58,8 +56,8 @@ axios.interceptors.request.use((config) => {
 axios.interceptors.response.use((res) =>{
     if(res.config.url.search('EIP_MOA_Services')!=-1){
         try {
-            var temp = res.data
-            res.data = JSON.parse(decodeURIComponent(res.data));
+            var str = res.data.replace(/\+/g,"%20")
+            res.data = JSON.parse(decodeURIComponent(decodeURIComponent(str)));
         } catch(error) {
             // console.log("response.error");
             // console.log(error);
@@ -228,19 +226,23 @@ function ajax(options) {
 }
 
 export function login(data, s, e){
-    ajax({
-        url: url.login,
-        method: 'POST',
-        data: data,
-        success:function(data,xhr){
-            console.log("success");
-            s();
-        },
-        error:function(err,xhr){
-            console.log("error");
-            e();
-        }
-    });
+    if(1){
+        ajax({
+            url: url.login,
+            method: 'POST',
+            data: data,
+            success:function(data,xhr){
+                console.log("success");
+                s();
+            },
+            error:function(err,xhr){
+                console.log("error");
+                e();
+            }
+        });
+    }else{
+        s();
+    }
 }
 
 //============================================================================================
@@ -269,6 +271,8 @@ export function checkLogin(){
 export let url= {
     //登录 j_username  j_password
     login: '/EIP_SSO/j_security_check',
+    //获取初始数据   processId
+    initData: '/EIP_MOA_Services/QueryProcessInfoSrv.do?method=getProcessInfo',
     //表单 procType procId userId system
     form: '/EIP_MOA_Services/QueryProcDataForSimpleSrv.do?method=getQueryProcDataForSimple',
     //表格 procType procId userId system pageNum pageSize keyColmName

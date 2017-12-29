@@ -9,9 +9,10 @@ import WriteOpinion from '@/components/writeOpinion'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes:
   [{
+    // path: '/main/:processId',
     path: '/main',
     name: 'Main',
     component: Main,

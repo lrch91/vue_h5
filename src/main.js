@@ -8,6 +8,7 @@ import 'mint-ui/lib/style.css'
 import plugin from './plugin/index'
 import FastClick from 'fastclick'
 import {post,checkLogin,login,url} from './util/http'
+import {callHandler,registerHandler} from './util/jsBridge'
 import './assets/css/default.css'
 
 // Vue.use(mint)
@@ -33,8 +34,9 @@ FastClick.attach(document.body)
 Vue.config.productionTip = false
 Vue.prototype.$post = post
 Vue.prototype.$login = login
-Vue.prototype.$checkLogin = checkLogin
 Vue.prototype.$url = url
+Vue.prototype.$callHandler = callHandler
+Vue.prototype.$registerHandler = registerHandler
 
 /* eslint-disable no-new */
 new Vue({

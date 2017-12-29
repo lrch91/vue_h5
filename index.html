@@ -4,9 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>vue_h5</title>
+    <script>
+      // document.getElementsByTagName('html')[0].style.fontSize = window.screen.width/7.5+'px';
+      // alert(document.getElementsByTagName('html')[0].style.fontSize)
+      // 设置html根节点font-size
+      (function (doc, win) {
+        var docEl = doc.documentElement,  
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+        recalc = function () {
+          var clientWidth = docEl.clientWidth;
+          if (!clientWidth) return;
+          docEl.style.fontSize = window.screen.width / 7.5 + 'px';
+        };
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+      })(document, window);
+
+      // var h={}
+      // h.ttt=function(e){
+      //     alert(e)
+      // }
+      // var func = eval("h.ttt")
+      // func("44444444")
+    </script>
   </head>
   <body>
-    <header class="header"><a class="btn-left" href="javascript:window.history.back()">返回</a><span class="nav_title"></span><a class="btn-right" href="javascript:window.open('about:blank','_self').close()">关闭</a></header>
+    <!-- <header class="header"><a class="btn-left" href="javascript:window.history.back()">返回</a><span class="nav_title"></span><a class="btn-right" href="javascript:window.open('about:blank','_self').close()">关闭</a></header> -->
     <div id="app">
       
     </div>

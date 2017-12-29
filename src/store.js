@@ -13,81 +13,99 @@ const store = new Vuex.Store({
 		tableInfo:{
 			tableInfo: [],
 			tableName:'',
+		},
+		choosePersonUnderOrg:{
+			orgList:[],
+			initLevel:1,
+			finalLevel:3,
 		}
+		
 	},
 	getters: {
-		getBottomTabType: state => state.bottomTab.bottomType,
-		getMainInfo: state => state.main.mainInfo,
-		getMain_tableInfo: state => state.tableInfo.tableInfo,
-		getMain_tableName: state => state.tableInfo.tableName,
-		/* headNav: state => state.headNav,
-		audio: state => state.audio,
-		head: state => state.head,
-		audioLoadding: state => state.audioLoadding,
-		detailPlayerFlag: state => state.detailPlayerFlag,
-		showPlayer: state => state.showPlayer,
-		isPlay: state => state.isPlay */
+		getBottomTabType: state => {
+			/* var ss = window.sessionStorage.getItem("bottomTab")
+			if(ss && ss!='' && (!state.bottomTab)){
+				state.bottomTab = JSON.parse(ss)
+			} */
+			return state.bottomTab.bottomType
+		},
+		getMainInfo: state => {
+			/* var ss = window.sessionStorage.getItem("main")
+			if(ss && ss!='' && (!state.main)){
+				state.main = JSON.parse(ss)
+			} */
+			return state.main.mainInfo
+		},
+		getMain_tableInfo: state => {
+			/* var ss = window.sessionStorage.getItem("tableInfo")
+			if(ss && ss!='' && (!state.tableInfo)){
+				state.tableInfo = JSON.parse(ss)
+				alert("tableInfo:"+ss)
+			} */
+			return state.tableInfo.tableInfo
+		},
+		getMain_tableName: state => {
+			/* var ss = window.sessionStorage.getItem("tableInfo")
+			if(ss && ss!='' &&(!state.tableInfo)){
+				state.tableInfo = JSON.parse(ss)
+				alert("tableInfo:"+ss)
+			} */
+			return state.tableInfo.tableName
+		},
+		getChoosePersonUnderOrg_orgList: state => {
+			/* var ss = window.sessionStorage.getItem("choosePersonUnderOrg")
+			if(ss && ss!='' &&(!state.choosePersonUnderOrg)){
+				state.choosePersonUnderOrg = JSON.parse(ss)
+				alert("choosePersonUnderOrg:"+ss)
+			} */
+			return state.choosePersonUnderOrg.orgList
+		},
+		getChoosePersonUnderOrg_initLevel: state => {
+			/* var ss = window.sessionStorage.getItem("choosePersonUnderOrg")
+			if(ss && ss!='' &&(!state.choosePersonUnderOrg)){
+				state.choosePersonUnderOrg = JSON.parse(ss)
+				alert("choosePersonUnderOrg:"+ss)
+			} */
+			return state.choosePersonUnderOrg.initLevel
+		},
+		getChoosePersonUnderOrg_finalLevel: state => {
+			/* var ss = window.sessionStorage.getItem("choosePersonUnderOrg")
+			if(ss && ss!='' &&(!state.choosePersonUnderOrg)){
+				state.choosePersonUnderOrg = JSON.parse(ss)
+				alert("choosePersonUnderOrg:"+ss)
+			} */
+			return state.choosePersonUnderOrg.finalLevel
+		},
 	},
 	mutations: {
         setMainInfo(state, mainInfo){
-            state.main.mainInfo = mainInfo;
+			state.main.mainInfo = mainInfo;
+			// window.sessionStorage.setItem('main',JSON.stringify(state.main))
         },
         setBottomTabType(state, bottomType){
-            state.bottomTab.bottomType = bottomType;
+			state.bottomTab.bottomType = bottomType;
+			// window.sessionStorage.setItem('bottomTab',JSON.stringify(state.bottomTab))
         },
         setMain_tableInfo(state, tableInfo){
-            state.tableInfo.tableInfo = tableInfo;
+			state.tableInfo.tableInfo = tableInfo;
+			// window.sessionStorage.setItem('tableInfo',JSON.stringify(state.tableInfo))
         },
         setMain_tableName(state, tableName){
-            state.tableInfo.tableName = tableName;
-        }
-		/* setAudio(state, audio){
-			if (!state.listenCount) {
-				state.showPlayer = true  //首次进入应用时不可打开播放详情
-			}
-			state.listenCount++
-			state.audio = {...(state.audio), ...audio}
+			state.tableInfo.tableName = tableName;
+			// window.sessionStorage.setItem('tableInfo',JSON.stringify(state.tableInfo))
+        },
+        setChoosePersonUnderOrg_orgList(state, orgList){
+			state.choosePersonUnderOrg.orgList = orgList;
+			// window.sessionStorage.setItem('choosePersonUnderOrg',JSON.stringify(state.choosePersonUnderOrg))
+        },
+        setChoosePersonUnderOrg_initLevel(state, initLevel){
+			state.choosePersonUnderOrg.initLevel = initLevel;
+			// window.sessionStorage.setItem('choosePersonUnderOrg',JSON.stringify(state.choosePersonUnderOrg))
+        },
+        setChoosePersonUnderOrg_finalLevel(state, finalLevel){
+			state.choosePersonUnderOrg.finalLevel = finalLevel;
+			// window.sessionStorage.setItem('choosePersonUnderOrg',JSON.stringify(state.choosePersonUnderOrg))
 		},
-		setAudioTime(state, time){
-			state.audio.currentLength = time
-		},
-		setCurrent(state, flag){
-			state.audio.currentFlag = flag
-		},
-		showHead(state, flag){
-			state.head.toggle = flag
-		},
-		setHeadTitle(state, title){
-			state.head.title = title
-		},
-		setHeadStyle(state, style){
-			state.head.style = style
-		},
-		resetHeadStyle: state => {
-			state.head.style = {'background': 'rgba(43,162,251,0)'}
-		},
-		toggleAudioLoadding: (state, flag) => {
-			state.audioLoadding = flag
-		},
-		setHeadNav: (state, nav) => {
-			state.headNav = nav
-		},
-		showDetailPlayer: (state, flag) => {
-			state.detailPlayerFlag = flag
-		},
-		showPlayer: (state, flag) => {
-			state.showPlayer = flag
-		},
-		isPlay: (state, flag) => {
-			state.isPlay = flag
-		},
-		setLrc: (state, lrc) => {
-			state.audio = {...(state.audio), lrc}
-		},
-		setListInfo: (state, {list, index}) => {
-			state.listInfo.songList = list
-			state.listInfo.songIndex = index
-		} */
 	},
 	actions: {
 		/* getSong({commit, state}, hash){
@@ -129,7 +147,7 @@ const store = new Vuex.Store({
 			dispatch('getSong', hash)
 			dispatch('getLrc', hash)
 		} */
-	}
+	},
 })
 
 export default store

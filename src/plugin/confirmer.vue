@@ -1,6 +1,6 @@
 <template>
 	<div class="confirmer" v-show="visible">
-		<div class="confirmer_box">
+		<div class="confirmer_box" :class="{open:open,close:close}">
 			<span class="confirmer_h">提示</span>
 			<span class="confirmer_title">{{title}}</span>
 			<span class="confirmer_y" @click="confirmer_y_final()">
@@ -18,6 +18,8 @@ export default {
   data() {
     return {
         visible: false,
+				open: false,
+				close: false,
         title: "",
     };
   },
@@ -29,12 +31,20 @@ export default {
     confirmer_n(){
     },
     confirmer_y_final(){
+				this.open=false
+				this.close=true
         this.confirmer_y()
-        this.visible = false;
+				var timer = window.setTimeout(()=>{
+					this.visible = false
+				},100)
     },
     confirmer_n_final(){
+				this.open=false
+				this.close=true
         this.confirmer_n()
-        this.visible = false;
+				var timer = window.setTimeout(()=>{
+					this.visible = false
+				},100)
     },
   },
   computed: {
@@ -57,7 +67,7 @@ export default {
   .confirmer_box{
 	position: absolute;
 	top: calc(50% - 1.5rem);
-	left: 1rem;
+	left: calc(50% - 2.75rem);
 	height: 3rem;
 	width: 5.5rem;
 	background-color: white;
@@ -149,5 +159,62 @@ export default {
 	font-size: .34rem;
 	color: white;
   }
+
+	.open{
+    animation: open_act .2s ease-in-out;
+    -webkit-animation: open_act .2s ease-in-out;
+	}
+	.close{
+    animation: close_act .1s ease-in-out;
+    -webkit-animation: close_act .1s ease-in-out;
+	}
+
+	@keyframes open_act{
+		0% {
+			transform: scale(1.3);
+			opacity: 0;
+			display: block;
+		}
+		100% {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+
+	@-webkit-keyframes open_act {
+    0% {
+        -webkit-transform: scale(1.3);
+        opacity: 0
+    }
+
+    to {
+        -webkit-transform: scale(1);
+        opacity: 1
+    }
+}
+
+	@-webkit-keyframes close_act {
+    0% {
+        -webkit-transform: scale(1);
+        opacity: 1
+    }
+
+    to {
+        -webkit-transform: scale(.8);
+        opacity: 0
+    }
+}
+
+@keyframes close_act {
+    0% {
+        transform: scale(1);
+        opacity: 1
+    }
+
+    to {
+        transform: scale(.8);
+        opacity: 0;
+    }
+}
   /* 提示框 */
 </style>

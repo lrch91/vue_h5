@@ -37,7 +37,7 @@ export default {
 }
 
 .toast_open{
-    animation: toastKF 2s;
+    animation: toastKF .5s;
 }
 
 @keyframes toastKF{

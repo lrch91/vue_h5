@@ -1,1 +1,15 @@
-<!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1"><title>vue_h5</title><link href=/static/css/app.7b35fa7c1be41883d2690a12db7be3e4.css rel=stylesheet></head><body><header class=header><a class=btn-left href=javascript:window.history.back()>返回</a><span class=nav_title></span><a class=btn-right href="javascript:window.open('about:blank','_self').close()">关闭</a></header><div id=app></div><script type=text/javascript src=/static/js/manifest.02f0f6bf4cabaef0be26.js></script><script type=text/javascript src=/static/js/vendor.aed1f6648858e7ddcf3b.js></script><script type=text/javascript src=/static/js/app.793d151da0618887c9e4.js></script></body></html>
+<!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1"><title>vue_h5</title><script>// document.getElementsByTagName('html')[0].style.fontSize = window.screen.width/7.5+'px';
+      // alert(document.getElementsByTagName('html')[0].style.fontSize)
+      // 设置html根节点font-size
+      (function (doc, win) {
+        var docEl = doc.documentElement,  
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+        recalc = function () {
+          var clientWidth = docEl.clientWidth;
+          if (!clientWidth) return;
+          docEl.style.fontSize = window.screen.width / 7.5 + 'px';
+        };
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+      })(document, window);</script><link href=/static/css/app.6bdf3f9f77970a556ac148cff56143f6.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=/static/js/manifest.333d01e971b083b860c2.js></script><script type=text/javascript src=/static/js/vendor.aed1f6648858e7ddcf3b.js></script><script type=text/javascript src=/static/js/app.c0cc357ad95f20f05587.js></script></body></html>
